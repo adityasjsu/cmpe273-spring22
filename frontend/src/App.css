@@ -1,0 +1,158 @@
+.App {
+  text-align: center;
+}
+
+.Form-center {
+  text-align: center;
+  align-items: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+input[type="search bar"] {
+  width: 500px;
+}
+
+.logo-center {
+  vertical-align: middle;
+}
+
+.about-input {
+  height: 100px;
+  width: 200px;
+}
+
+.item-description-input {
+  height: 50px;
+  width: 200px;
+}
+
+/* ItemPopup */
+
+.modal11 {
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(5px);
+}
+
+.modal_content11 {
+  background-color: yellowgreen;
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  padding: 20px;
+  border-radius: 25px;
+  border: 2px solid black;
+}
+
+.close11 {
+  color: Black;
+  float: right;
+}
+
+/* ItemEditPopup */
+
+.modal22 {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(5px);
+}
+
+.modal_content22 {
+  background-color: yellowgreen;
+  position: fixed;
+  margin-top: -100;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  padding: 20px;
+  border-radius: 25px;
+  border: 2px solid black;
+}
+
+.close22 {
+  color: Black;
+  float: right;
+}
+
+.table-center {
+  text-align: center;
+}
+
+:root {
+  --main-background-color: #f9fbf2;
+  --main-top-background-color: #fbfef9;
+  --main-accent-color: #fb8f67;
+  --title-color: #1e2019;
+}
+
+.button.is-primary {
+  background-color: var(--main-accent-color);
+}
+
+.button.is-primary:hover {
+  background-color: var(--title-color);
+}
+
+.title {
+  color: var(--main-accent-color);
+  font-family: "Inconsolata", monospace;
+  font-size: 3em;
+}
+
+.item-image {
+  width: 50px;
+  height: 50px;
+}
+
+/* Item - to fix the overflow of edit */
+.overflow {
+  overflow: hidden;
+}
+
+.footer {
+  text-align: center;
+  padding: 3px;
+  background-color: rgb(170, 63, 27);
+  color: rgb(151, 14, 14);
+}

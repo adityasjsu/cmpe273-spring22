@@ -46,31 +46,7 @@ app.use(function(req, res, next) {
     next();
   });
 
-  
-/**
-//Route to handle Post Request Call
-app.post('/login',function(req,res){
-    
-    console.log("Inside Login Post Request");
-    console.log("Req Body : ",req.body);
-    Users.filter(function(user){
-        if(user.username === req.body.username && user.password === req.body.password){
-            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});
-            req.session.user = user;
-            res.writeHead(200,{
-                'Content-Type' : 'text/plain'
-            })
-            res.end("Successful Login");
-        }
-        else{
-            res.writeHead(201,{
-                'Content-Type' : 'text/plain'
-            })
-            res.end("Invalid username/password combination");
-        }
-    })
-});
-*/
+
 
 // Getting routes
 

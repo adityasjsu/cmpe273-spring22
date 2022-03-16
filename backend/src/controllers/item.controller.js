@@ -57,7 +57,7 @@ exports.getProductByID = (req, res) => {
     })
 }
 
-
+//
 // Get PRODUCT by SHOP name
 exports.getProductByShopName = (req, res) => {
     console.log("Inside ITEM Controller: Get PRODUCT by SHOPNAME");

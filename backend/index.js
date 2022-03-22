@@ -51,7 +51,7 @@ app.use(function(req, res, next) {
 // Getting routes
 
 // User 
-app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes); 
 
 // Shop 
 app.use("/api/shops", shopRoutes);

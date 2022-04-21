@@ -1,4 +1,4 @@
-const mysql = require('mysql')
+//const mysql = require('mysql')
 const db = require('../../config/db.config');
 
 
@@ -11,24 +11,66 @@ const db = require('../../config/db.config');
 // })
 
 // Encryption
+//const bcrypt = require('bcrypt');
+// const salt = 10;
+
+// var User = function(user){
+//     this.email = user.email;
+//     this.name = user.name;
+//     this.password = user.password;
+//     this.about = user.about;
+//     this.city = user.city;
+//     this.dob = user.dob;
+//     this.address = user.address;
+//     this.country = user.country;
+//     this.phone_no = user.phone_no;
+//     this.image = user.image;
+// }
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const salt = 10;
 
-var User = function(user){
-    this.email = user.email;
-    this.name = user.name;
-    this.password = user.password;
-    this.about = user.about;
-    this.city = user.city;
-    this.dob = user.dob;
-    this.address = user.address;
-    this.country = user.country;
-    this.phone_no = user.phone_no;
-    this.image = user.image;
-}
+const Schema = mongoose.Schema;
 
+// User Schema
+const UserSchema = new Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    name: {
+        type: String,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    about: {
+        type: String,
+    },
+    city: {
+        type: String,
+    },
+    dob: {
+        type: String,
+    },
+    address: {
+        type: String,
+    },
+    country: {
+        type: String,
+    },
+    phone_no: {
+        type: String,
+    },
+    image: {
+        type: String,
+        default: "/default.jpeg"
+    }
+});
 
-User.getAllUsers = (result) =>{
+UserSchema.getAllUsers = (result) =>{
     
     // pool.query('SELECT * FROM user WHERE username = "admin" ', (err,res) =>{
     //     if(err){
@@ -52,7 +94,7 @@ User.getAllUsers = (result) =>{
 }
 
 // Create user
-User.createUser = async (userReqData, result) => {
+UserSchema.createUser = async (userReqData, result) => {
 
     userReqData.password = await bcrypt.hash(userReqData.password, salt);
     db.query('INSERT INTO user SET ?', userReqData, (err, res) => {
@@ -68,7 +110,7 @@ User.createUser = async (userReqData, result) => {
 
 
 // Get User by email
-User.getUserByEmail = (email, result) => {
+UserSchema.getUserByEmail = (email, result) => {
 
     db.query('SELECT * FROM user WHERE email = ?', email , (err,res) => {
         if(err){
@@ -84,7 +126,7 @@ User.getUserByEmail = (email, result) => {
 
 
 // Update Profile
-User.updateProfile = async(email, userReqData, result) => {
+UserSchema.updateProfile = async(email, userReqData, result) => {
 
     db.query('UPDATE user SET email=?, name=?, about=?, city=?, dob=?, address=?, country=?, phone_no=?, image=? WHERE email=?' , 
     [userReqData.email, userReqData.name, userReqData.about, userReqData.city, userReqData.dob, userReqData.address, userReqData.country, userReqData.phone_no, userReqData.image, email], 
@@ -101,7 +143,5 @@ User.updateProfile = async(email, userReqData, result) => {
     })
 }
 
-
-
-
+const User = mongoose.model('user', UserSchema);
 module.exports = User;

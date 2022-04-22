@@ -21,7 +21,7 @@ exports.getAllOrders = (req,res) => {
 exports.createOrderItem = (req,res) => {
     console.log("\nCREATE ORDER ITEM");
 
-    const orderData = new orderModel(req.body);
+    const orderData = new orderModel.Order(req.body);
     orderModel.createOrderItem(orderData, (err, result) => {
         if(err){
             console.log(err);

@@ -20,7 +20,8 @@ exports.getAllUsers = (req,res) => {
 exports.createUser = (req,res) => {
     console.log("\nCREATE USER");
 
-    const userData = new userModel(req.body);
+    const userData = new userModel.User(req.body);
+    console.log("userdata",userData);
     userModel.createUser(userData, (err, result) => {
         if(err){
             console.log(err);
@@ -63,8 +64,18 @@ exports.getUserByEmail = (req, res) => {
 exports.updateProfile = (req, res) => {
     console.log("Inside User Controller: Update Profile");
 
-    const userReqData = new userModel(req.body);
-    userModel.updateProfile(req.params.email, userReqData , (err, result) => {
+    //const userReqData = new userModel.User(req.body);
+    const userReqData = { name: req.body.name,
+        image: req.body.image,
+        email: req.body.email,
+        about: req.body.about,
+        city: req.body.city,
+        dob: req.body.dob,
+     address: req.body.address,
+     country: req.body.country,
+    phone_no: req.body.phone_no}
+    console.log("param id--",req.params.id,"body id--",req.body.id)
+    userModel.updateProfile(req.body.id, userReqData , (err, result) => {
         if(err){
             console.log(err);
             res.send(err);

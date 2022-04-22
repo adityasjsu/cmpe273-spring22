@@ -38,120 +38,64 @@ app.use(bodyParser.json());
 
 
 //Allow Access Control
-app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
-    res.setHeader('Cache-Control', 'no-cache');
-    next();
-  });
+ app.use(function(req, res, next) {
+     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+     res.setHeader('Access-Control-Allow-Credentials', 'true');
+     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT,DELETE');
+     res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers');
+     res.setHeader('Cache-Control', 'no-cache');
+     next();
+   });
 
   
-/**
-//Route to handle Post Request Call
-app.post('/login',function(req,res){
-    
-    console.log("Inside Login Post Request");
-    console.log("Req Body : ",req.body);
-    Users.filter(function(user){
-        if(user.username === req.body.username && user.password === req.body.password){
-            res.cookie('cookie',"admin",{maxAge: 900000, httpOnly: false, path : '/'});
-            req.session.user = user;
-            res.writeHead(200,{
-                'Content-Type' : 'text/plain'
-            })
-            res.end("Successful Login");
-        }
-        else{
-
-            res.writeHead(201,{
-                'Content-Type' : 'text/plain'
-            })
-            res.end("Invalid username/password combination");
-        }
-    })
-});
-*/
 
 // Getting routes
 
 // User 
-//app.use("/api/users", userRoutes);
+app.use("/api/users", userRoutes);
 
 // Shop 
-//app.use("/api/shops", shopRoutes);
+app.use("/api/shops", shopRoutes);
 
 // Item 
-//app.use("/api/items", itemRoutes);
+app.use("/api/items", itemRoutes);
 
 // Cart 
-//app.use("/api/cart", cartRoutes);
+app.use("/api/cart", cartRoutes);
 
 // Order Routes
-//app.use("/api/orders", orderRoutes);
+app.use("/api/orders", orderRoutes);
+
 
 
 // Login function
-// app.post('/api/login', async (req,res) => {
-//     const email = req.body.email;
-//     const password = req.body.password;
 
-//     db.query("SELECT * FROM user WHERE email = ?",
-//     [email],
-//     async (err, result) => {
-//         if(err){
-//             res.send({err:err});
-//         }
-//         if(result.length > 0){
-
-//             const comparison = await bcrypt.compare(password, result[0].password)
-//             if(comparison){
-//                 //res.session.user = result[0];
-//                 res.send(result);
-//                 console.log("Login Success");
-//             }
-//             else{
-//                 res.send("Wrong Password");
-//                 console.log("Login Failed, Wrong Password");
-//             }
-//         }
-//         else{
-//             console.log("User does not exist");
-//             res.send("Incorrect email/password combination");
-//         }
-//     })
-// })
-
-//Route to handle Post Request Call
-app.post('/api/login',(req, res) => {
+app.post('/api/login', async (req, res) => {
             console.log("inside login");
          const email = req.body.email;
          const password = req.body.password;
          console.log("email:",email,"password:",password);
-    userModel.findOne({ email: email, password: password }, (error, user) => {
+    userModel.User.findOne({ email: email }, async (error, user) => {
         if (error) {
             console.log("error in login");
-            res.writeHead(500, {
-                'Content-Type': 'text/plain'
-            })
-            res.end("Error Occured");
+                         res.send({err:err});
         }
         if (user) {
-            console.log(" login success");
-            res.cookie('cookie', user.username, { maxAge: 900000, httpOnly: false, path: '/' });
-            req.session.user = user;
-            res.writeHead(200, {
-                'Content-Type': 'text/plain'
-            })
-            res.end();
+            
+            const comparison = await bcrypt.compare(password, user.password)
+             if(comparison){
+                 res.send(user);
+                 console.log("Login Success");
+             }
+        else{
+                     res.send("Wrong Password");
+                     console.log("Login Failed, Wrong Password");
+                 }
         }
         else {
-            console.log("inside invalid");
-            res.writeHead(401, {
-                'Content-Type': 'text/plain'
-            })
-            res.end("Invalid Credentials");
+
+            console.log("User does not exist");
+             res.send("Incorrect email/password combination");
         }
     });    
 });

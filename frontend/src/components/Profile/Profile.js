@@ -20,12 +20,12 @@ const Profile = () => {
     useEffect(() => {
         axios.get("/api/users/" + sessionStorage.getItem("token"))
         .then((response) => {
-            setUser(response.data[0]);
-            setUsername(response.data[0].email);
-            setName(response.data[0].name);
-            setEmail(response.data[0].email);
-            setImage(response.data[0].image);
-            //console.log(response.data[0]);
+            setUser(response.data);
+            setUsername(response.data.email);
+            setName(response.data.name);
+            setEmail(response.data.email);
+            setImage(response.data.image);
+           
         });
         console.log("Username:", username);
 

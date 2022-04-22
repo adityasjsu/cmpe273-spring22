@@ -20,7 +20,7 @@ exports.getAllProducts = (req,res) => {
 exports.createProduct = (req,res) => {
     console.log("\nCREATE PRODUCT");
 
-    const productData = new productModel(req.body);
+    const productData = new productModel.Product(req.body);
     productModel.createProduct(productData, (err, result) => {
         if(err){
             console.log(err);
@@ -57,7 +57,7 @@ exports.getProductByID = (req, res) => {
     })
 }
 
-//
+
 // Get PRODUCT by SHOP name
 exports.getProductByShopName = (req, res) => {
     console.log("Inside ITEM Controller: Get PRODUCT by SHOPNAME");
@@ -107,8 +107,16 @@ exports.getProductByName = (req, res) => {
 // Update PRODUCT
 exports.updateProduct = (req, res) => {
     console.log("Inside Product Controller: Update Product");
-
-    const productData = new productModel(req.body);
+    const productData = {
+        name: req.body.name,
+category: req.body.category,
+description: req.body.description,
+price: req.body.price,
+quantity: req.body.quantity,
+fav: req.body.fav,
+image: req.body.image
+    }
+   // const productData = new productModel(req.body);
     productModel.updateProduct(req.params.product_ID, productData , (err, result) => {
         if(err){
             console.log(err);
@@ -126,7 +134,10 @@ exports.updateProduct = (req, res) => {
 // Update Product Quantity
 exports.updateProductQuantity = (req, res) => {
 
-    const productData= new productModel(req.body);
+    const productData = {
+quantity: req.body.quantity
+    }
+    //const productData= new productModel(req.body);
     productModel.updateProductQuantity(req.params.product_ID, productData, (err,result) => {
         if(err)
         res.send(err);
@@ -141,7 +152,10 @@ exports.updateProductQuantity = (req, res) => {
 // Favorite/Unfav Product
 exports.updateProductFav = (req, res) => {
 
-    const productData= new productModel(req.body);
+    const productData = {
+        fav: req.body.fav
+            }
+    //const productData= new productModel(req.body);
     productModel.updateProductFav(req.params.product_ID, productData, (err,result) => {
         if(err)
         res.send(err);

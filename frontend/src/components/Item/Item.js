@@ -46,7 +46,7 @@ function Item(props) {
             fav:"0"
         }
 
-        axios.put("http://3.22.185.203:3001/api/items/fav/"+ props.item.product_ID, data)
+        axios.put("/api/items/fav/"+ props.item.product_ID, data)
         .then(response => {
             setFav(false);
         })

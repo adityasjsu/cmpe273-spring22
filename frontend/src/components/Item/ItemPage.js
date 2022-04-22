@@ -23,8 +23,8 @@ const ItemPage = (props) => {
             let response = axios.get("/api/items/"+ id);
             response = await response;
 
-            setItem(response.data[0]);
-            console.log(response.data[0])
+            setItem(response.data);
+            console.log(response.data)
         }
 
         getItem();
@@ -36,9 +36,9 @@ const ItemPage = (props) => {
 
         axios.get("/api/shops/"+ item.shopname)
             .then(response => {
-                setShopName(response.data[0].name);
-                setSales(response.data[0].total_sales)
-                console.log(response.data[0].name)
+                setShopName(response.data.name);
+                setSales(response.data.total_sales)
+                console.log(response.data.name)
             });
 
         if(item.fav === "1"){
@@ -61,7 +61,8 @@ const ItemPage = (props) => {
         .then(response => {
             setFav(true);
         })
-        console.log("Item Favorited")
+        console.log("Item Favorited");
+        console.log("fav:",fav);
         window.location.reload(false);
     }
 
@@ -175,7 +176,7 @@ const ItemPage = (props) => {
                     ""}
 { fav ?  
                     
-                    <button color='link' onClick={handleUnFav} >Add to Favorites</button> 
+                    <button color='link' onClick={handleUnFav} >Add to UnFavorites</button> 
                 
                     :   
                     

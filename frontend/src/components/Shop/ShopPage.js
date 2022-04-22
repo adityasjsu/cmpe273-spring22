@@ -29,13 +29,13 @@ const ShopPage = (props) => {
             //let response = axios.get("/api/v1/shops/usershop/" + sessionStorage.getItem("token"));
             let response = axios.get("/api/shops/" + id)
             response = await response;
-            setShopID(response.data[0].name);
-            setImage(response.data[0].image);
-            setName(response.data[0].name);
-            setUsername(response.data[0].email);
-            setTotalSales(response.data[0].total_sales);
+            setShopID(response.data.name);
+            setImage(response.data.image);
+            setName(response.data.name);
+            setUsername(response.data.email);
+            setTotalSales(response.data.total_sales);
 
-            if(response.data[0].email === sessionStorage.getItem("token")){
+            if(response.data.email === sessionStorage.getItem("token")){
                 setUserShop(true);
             }
 
@@ -177,7 +177,7 @@ const ShopPage = (props) => {
                     </CContainer>
 
                 : 
-                        <><br /><br /><p>No Products. Add new products</p></>}
+                        <><center><p>No Products. Add new products</p></center></>}
                         {/* {{valid ? items.map(({ item_ID, name, description, quantity }) => (
                             <p key={item_ID}>Item name: {name},Description {description}, Quantity: {quantity}.</p>
                         )) : <p>NO ITEMS in this Shop</p>}} */} 

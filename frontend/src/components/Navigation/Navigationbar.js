@@ -30,6 +30,7 @@ const Navigationbar = (props) => {
                         window.location.reload(false);
             }
             else{
+                console.log("inside invalid search");
                 navigate("/login"); 
             }
      }

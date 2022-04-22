@@ -8,12 +8,6 @@ import { CContainer, CRow, CFooter } from '@coreui/react';
 const Homepage = () => {
 
     const[items, setItems] = useState([])
-   // console.log("qqqqqqq:",sessionStorage.getItem("shop") !== "undefined");
-    // //const userShop = sessionStorage.getItem("shop");
-    // if(sessionStorage.getItem("token")!=null && sessionStorage.getItem("token")!=="undefined")
-    // {
-    //     const welcomeText = "Welcome";
-    // }
     const[currency,setCurrency] = useState(localStorage.getItem("currency"));
     const[country,setCountry] = useState(localStorage.getItem("country"));
   
@@ -26,7 +20,7 @@ const Homepage = () => {
             let response = axios.get("/api/items/")
             response = await response;
 
-            setItems(response.data.filter(item =>item.shopname != shop.data[0].name))
+            setItems(response.data.filter(item =>item.shopname != shop.data.name))
             
         }
         getItems();

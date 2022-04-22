@@ -20,7 +20,7 @@ exports.getAllShops = (req,res) => {
 exports.createShop = (req,res) => {
     console.log("\nInside SHOP Controller: CREATE SHOP");
 
-    const shopData = new shopModel(req.body);
+    const shopData = new shopModel.Shop(req.body);
     shopModel.createShop(shopData, (err, result) => {
         if(err){
             console.log(err);
@@ -39,14 +39,14 @@ exports.createShop = (req,res) => {
 
 // Get SHOP by SHOP Name
 exports.getShopByName = (req, res) => {
-    console.log("\nInside SHOP Controller: Get SHOP By USER");
-
+    console.log("\nInside SHOP Controller: Get SHOP By name");
+    console.log("name of shop:",req.params.name);
     shopModel.getShopByName(req.params.name ,(err, result) => {
         if(err){
             console.log(err);
             res.send(err);
         }
-        if(result.length == 0)
+        if(result && result.length == 0)
         {
             console.log("No Such Shop exists");
             res.send("No such Shop exists");
@@ -69,7 +69,7 @@ exports.getShopByUser = (req, res) => {
             console.log(err);
             res.send(err);
         }
-        if(result.length == 0)
+        if(result && result.length == 0)
         {
             console.log("No Such Shop exists");
             res.send("No such Shop exists");
@@ -85,8 +85,11 @@ exports.getShopByUser = (req, res) => {
 // Update Shop
 exports.updateShop = (req, res) => {
     console.log("Inside Shop Controller: Update Shop");
-
-    const shopReqData = new shopModel(req.body);
+    const shopReqData = {
+        total_sales: req.body.total_sales,
+        name : req.body.name,
+        image : req.body.image}
+ //   const shopReqData = new shopModel(req.body);
     shopModel.updateShop(req.params.name, shopReqData , (err, result) => {
         if(err){
             console.log(err);
@@ -103,7 +106,10 @@ exports.updateShop = (req, res) => {
 // Update Shop Total Sales
 exports.updateShopSales = (req, res) => {
 
-    const shopReqData= new shopModel(req.body);
+    const shopReqData = {
+        total_sales: req.body.total_sales
+    }
+   // const shopReqData= new shopModel(req.body);
     shopModel.updateShopSales(req.params.name, shopReqData, (err,result) => {
         if(err)
         console.log(err)
@@ -119,7 +125,10 @@ exports.updateShopSales = (req, res) => {
 exports.updateShopImage = (req, res) => {
 
     console.log("Inside Shop Controller: Update Shop Image");
-    const shopReqData= new shopModel(req.body);
+    const shopReqData = {
+        image : req.body.image
+    }
+    //const shopReqData= new shopModel(req.body);
     shopModel.updateShopImage(req.params.name, shopReqData, (err,result) => {
         if(err){
             res.send(err);

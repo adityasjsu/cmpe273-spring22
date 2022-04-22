@@ -38,7 +38,7 @@ class Login extends Component {
             password: this.state.password,
         }
         axios.defaults.withCredentials = true;
-        axios.post("/api/login", data)
+        axios.post("api/login", data)
             .then(response => {
                 console.log("Status code" , response.status);
 
@@ -52,14 +52,16 @@ class Login extends Component {
                     axios.get("/api/shops/usershop/"+data.email)
                     .then(response => {
                     if(response){
-                        sessionStorage.setItem("shop",response.data[0].name);
+                        sessionStorage.setItem("shop",response.data.name);
                     }
             })  
                 }
                 else{
+                    console.log("inside else");
                     this.setState({
                         errMessage: "Could Not Sign In"
                     })
+                    console.log("err",this.state.errMessage);
                 }
             })
     }

@@ -10,8 +10,6 @@ const UpdateProfile = () => {
     const location = useLocation()
     const { user } = location.state
 
-    // const fileInput = React.createRef();
-
     const[name, setName] = useState(user.name);
     const[image, setImage] = useState(user.image);
     const[email, setEmail] = useState(user.email);
@@ -23,22 +21,15 @@ const UpdateProfile = () => {
     const[phone_no, setPhone] = useState(user.phone_no);
     const[message , setMessage] = useState("");
     const[updated,setUpdated] = useState(false);
-
+    const[id] = useState(user._id);
+    console.log("user with id",user._id);
     
-
-    // useEffect(() => {
-    //     axios.get("/api/v1/users/" + sessionStorage.getItem("token"))
-    //     .then((response) => {
-    //         setUser(response.data[0]);
-    //         console.log("user fetched")
-    //         console.log(user);
-    //     });
-    // },[]);
 
     const handleUpdate = (e) => {
         e.preventDefault();
 
         const updatedData = {
+
             name: name,
             image:image,
             email: email,
@@ -47,7 +38,8 @@ const UpdateProfile = () => {
             dob: dob,
             address: address,
             country: country,
-            phone_no: phone_no
+            phone_no: phone_no,
+            id: id
         }
 
         axios.put("/api/users/" + sessionStorage.getItem("token") , updatedData)
@@ -56,19 +48,8 @@ const UpdateProfile = () => {
             setUpdated(true);
         });
 
-        // console.log(
-        //     `Selected file - ${fileInput.current.files[0].name}`
-        //   );
     }
 
-    // const handleImageChange = (e) => {
-    //     setImage(e.target.value);
-    //     console.log(image);
-
-    //     console.log(
-    //         `Selected file - ${fileInput.current.files[0].name}`
-    //       );
-    // }
 
     const uploadImage = async e=> {
         const files = e.target.files
@@ -122,9 +103,7 @@ const UpdateProfile = () => {
                                 <label>Name:</label>
                                 <input  value={name} onChange={(e) => setName(e.target.value)} type='text' name="name" placeholder='Name'></input>
                                 <br/>
-                                {/* <CFormLabel>Email:</CFormLabel>
-                                <CFormInput  value={email} onChange={(e) => setEmail(e.target.value)} type='text' name="name" placeholder='Name'></CFormInput>
-                                <br/> */}
+                                {}
                                 <br/>
                                 <label>Email:</label>
                                 <input className='' value={email} disabled type='text' name="email" placeholder='email'></input>

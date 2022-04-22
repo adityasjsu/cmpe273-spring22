@@ -21,7 +21,7 @@ exports.getAllItems = (req,res) => {
 exports.createItem = (req,res) => {
     console.log("\nCREATE CART ITEM");
 
-    const cartData = new cartModel(req.body);
+    const cartData = new cartModel.Cart(req.body);
     cartModel.createItem(cartData, (err, result) => {
         if(err){
             console.log(err);

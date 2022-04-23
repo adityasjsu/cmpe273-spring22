@@ -43,10 +43,13 @@ class Login extends Component {
                 console.log("Status code" , response.status);
 
                 if(response.status === 200){
+                    if(response.data !== "Wrong Password" && response.data !== "Incorrect email/password combination"){
                     sessionStorage.setItem("token", data.email);
-
+                    localStorage.setItem("authToken",response.data);
+                    console.log("response : ",response);
                     this.setState({
-                        auth: true
+                        auth: true,
+                        errMessage:""
                     })
 
                     axios.get("/api/shops/usershop/"+data.email)
@@ -56,6 +59,12 @@ class Login extends Component {
                     }
             })  
                 }
+            else{
+                this.setState({
+                    errMessage : response.data
+                })
+            }
+            }
                 else{
                     console.log("inside else");
                     this.setState({
@@ -90,7 +99,7 @@ class Login extends Component {
                                 <p>Please enter your email and password</p>
                             </div>
                             <form onSubmit={this.submitLogin}>
-                                <div id='invalidCredError' style={{ color: "red" }}></div>
+                                <div id='invalidCredError' style={{ color: "red" }}>{this.state.errMessage}</div>
                                 <div class="form-group">
                                     <input onChange={this.emailChangeHandler} type="email"
                                         class="form-control" name="emailId" placeholder="Email Address" required />

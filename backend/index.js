@@ -9,6 +9,10 @@ var db = require('./config/db.config');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const userModel = require('./src/models/user.model');
+const jwt = require('jsonwebtoken');
+const {secret} = require("./config/auth.config");
+const { auth } = require("./config/auth");
+auth();
 
 //Importing routes
 const userRoutes = require('./src/routes/user.route');
@@ -84,7 +88,13 @@ app.post('/api/login', async (req, res) => {
             
             const comparison = await bcrypt.compare(password, user.password)
              if(comparison){
-                 res.send(user);
+                const payload = { _id: user._id, email: user.email};
+                const token = jwt.sign(payload, secret, {
+                    expiresIn: 1008000
+                });
+                res.status(200).end("JWT " + token);
+                 //res.send("Login Success");
+                 //res.send(user);
                  console.log("Login Success");
              }
         else{

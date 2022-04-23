@@ -55,6 +55,7 @@ const Navigationbar = (props) => {
         setSignedIn(false);
         sessionStorage.removeItem("token");
         sessionStorage.removeItem("shop");
+        localStorage.removeItem("authToken");
         navigate("/");
     }
 

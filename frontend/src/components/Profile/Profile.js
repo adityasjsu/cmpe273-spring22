@@ -2,9 +2,10 @@ import React , {useEffect, useState} from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import { Navigate } from 'react-router';
+import { useNavigate } from "react-router-dom";
 import FavItems from './FavItems';
 import { CContainer, CRow, CCol, CButton } from '@coreui/react';
+import Navbar from '../Navigation/Navigationbar';
 
 const Profile = () => {
     const[username, setUsername] = useState("");
@@ -15,9 +16,11 @@ const Profile = () => {
     const[favItems,setFavItems] = useState([]);
     const userShop = sessionStorage.getItem("shop")
     const[hasShop, setHasShop] = useState(false);
+    const navigate = useNavigate();
  
 
     useEffect(() => {
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('authToken');
         axios.get("/api/users/" + sessionStorage.getItem("token"))
         .then((response) => {
             setUser(response.data);
@@ -25,14 +28,24 @@ const Profile = () => {
             setName(response.data.name);
             setEmail(response.data.email);
             setImage(response.data.image);
-           
-        });
-        console.log("Username:", username);
 
+            
         axios.get("/api/items/")
         .then(response => {
             setFavItems(response.data.filter(item =>item.fav === "1"));
         })
+           
+        })
+        .catch(err => {
+            console.log("authorization failed");
+            //sessionStorage.removeItem("token");
+            //sessionStorage.removeItem("shop");
+          //  localStorage.removeItem("authToken");
+          alert("authorization failed. Sign out and Sign in again")
+           // navigate("/login"); 
+        });
+        console.log("Username:", username);
+
 
         if(userShop != "undefined"){
             setHasShop(true);

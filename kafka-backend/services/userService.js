@@ -57,24 +57,25 @@ getUserByEmail = (email, result) => {
 updateProfile = async (userReqData, result) => {
 
     const userData = {
-        name: userReqData.name,
-        image: userReqData.image,
-        email: userReqData.email,
-        about: userReqData.about,
-        city: userReqData.city,
-        dob: userReqData.dob,
-        address: userReqData.address,
-        country: userReqData.country,
-        phone_no: userReqData.phone_no
+        name: userReqData.body.name,
+        image: userReqData.body.image,
+        email: userReqData.body.email,
+        about: userReqData.body.about,
+        city: userReqData.body.city,
+        dob: userReqData.body.dob,
+        address: userReqData.body.address,
+        country: userReqData.body.country,
+        phone_no: userReqData.body.phone_no
     }
-    userModel.User.findOneAndUpdate({ _id: userReqData.id }, userData, { new: true }, (err, res) => {
+    console.log("userreqdata",userReqData);
+    userModel.User.findOneAndUpdate({ _id: userReqData.body.id }, userData, { new: true }, (err, res) => {
         if (err) {
             console.log(err);
             result(null, err);
         }
         else {
             console.log("Profile updated");
-            console.log(res);
+            console.log(res,userReqData.email);
             result(null, { message: "User Updated", status: true });
         }
     })

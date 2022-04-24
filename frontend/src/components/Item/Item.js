@@ -31,10 +31,23 @@ function Item(props) {
             fav: "1"
         }
             ;
+            if(!localStorage.getItem('authToken'))
+            {
+                navigate("/login"); 
+            }
+            axios.defaults.headers.common['authorization'] = localStorage.getItem('authToken');
         axios.put("/api/items/fav/" + props.item.product_ID, data)
             .then(response => {
                 setFav(true);
             })
+            .catch(err => {
+                console.log("authorization failed");
+                //sessionStorage.removeItem("token");
+                //sessionStorage.removeItem("shop");
+              //  localStorage.removeItem("authToken");
+             // alert("authorization failed. Sign in again")
+                navigate("/login"); 
+            });
         console.log("Item Favorited")
         window.location.reload(false);
     }
@@ -44,11 +57,23 @@ function Item(props) {
         const data = {
             fav: "0"
         }
-
+        if(!localStorage.getItem('authToken'))
+        {
+            navigate("/login"); 
+        }
+        axios.defaults.headers.common['authorization'] = localStorage.getItem('authToken');
         axios.put("/api/items/fav/" + props.item.product_ID, data)
             .then(response => {
                 setFav(false);
             })
+            .catch(err => {
+                console.log("authorization failed");
+                //sessionStorage.removeItem("token");
+                //sessionStorage.removeItem("shop");
+              //  localStorage.removeItem("authToken");
+              alert("authorization failed. Sign in again")
+                navigate("/login"); 
+            });
         console.log("Item UnFavorited")
         window.location.reload(false);
     }

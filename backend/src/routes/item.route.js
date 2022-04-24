@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const { checkAuth } = require("../../config/auth");
 
 // Import item controller
 const itemController = require('../controllers/item.controller');
@@ -26,7 +27,7 @@ router.put("/:product_ID", itemController.updateProduct);
 router.put("/stock/:product_ID", itemController.updateProductQuantity);
 
 // Update Item Fav
-router.put("/fav/:product_ID", itemController.updateProductFav);
+router.put("/fav/:product_ID",checkAuth, itemController.updateProductFav);
 
 // Delete Item
 router.delete("/:product_ID", itemController.deleteProduct);

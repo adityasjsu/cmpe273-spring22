@@ -84,6 +84,7 @@ const Navigationbar = (props) => {
                                     <Nav.Link href="/profile" >Profile</Nav.Link>
                                     <Nav.Link href="/createShop" >Shop</Nav.Link>
                                     <Nav.Link href="/cart" >Cart</Nav.Link>
+                                    <Nav.Link href="/orders" >Orders</Nav.Link>
                                     <Button variant="link" onClick={handleSignout}>
                                         Signout
                                     </Button>

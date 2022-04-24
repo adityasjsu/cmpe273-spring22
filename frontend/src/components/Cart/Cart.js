@@ -171,6 +171,20 @@ const Cart = () => {
                   console.log(
                     "cart object is : " + JSON.stringify(cartItems)
                   );
+                  if(item.quantity === 0){
+                    let t = cartItems;
+                    const index = t
+                      ? t.findIndex(
+                        (cartItem) => cartItem._id === item._id
+                      )
+                      : 0;
+                    console.log("index:", index, t);
+                    t.splice(index, 1);
+                    setCartItems(t);
+                    setTotal(t.reduce((a, v) => a + v.price, 0).toFixed(2));
+                    forceUpdate();      
+                  }
+                  else{
                   const index = cartItems
                     ? cartItems.findIndex(
                       (cartItem) => cartItem._id === item._id
@@ -185,7 +199,7 @@ const Cart = () => {
                   // forceUpdate();
                   console.log(
                     "cart object is : " + JSON.stringify(cartItems)
-                  );
+                  );}
                 }}>-</button>
                 <input
                   type="text"

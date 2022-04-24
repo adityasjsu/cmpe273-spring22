@@ -17,8 +17,11 @@ const OrderPage = (props) => {
             axios.get("/api/orders/" + sessionStorage.getItem("token"))
             .then((response) => {
                 if (response.status === 200) {
+                    response.data.sort( (a, b) =>
+                    a.date_purc.localeCompare(b.date) ||
+                    a.time.date_purc(b.time));
                     console.log("response:", response.data);
-                    const items = response.data
+                    const items = response.data;
                     setOrderItems(items);
                     setHasItems(true);
                 }
@@ -50,9 +53,6 @@ const OrderPage = (props) => {
         const handlePageChange = (e) => {
             console.log(e.selected);
             const newOffset = (e.selected * perPage) % orderItems.length;
-            console.log(
-                `User requested page number ${e.selected}, which is offset ${newOffset}`
-            );
             setOffSet(newOffset);
         };
 
@@ -118,7 +118,7 @@ const OrderPage = (props) => {
     console.log("\n Inside Orders Page")
 
     return orderItems.length === 0 ? (
-        <h2>No orders yet. Please purchase something.</h2>
+        <h2></h2>
     ) : (
         <div className='App'>
 

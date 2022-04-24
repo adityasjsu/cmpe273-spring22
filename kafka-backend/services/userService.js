@@ -67,7 +67,7 @@ updateProfile = async (userReqData, result) => {
         country: userReqData.country,
         phone_no: userReqData.phone_no
     }
-    User.findOneAndUpdate({ _id: userReqData.id }, userData, { new: true }, (err, res) => {
+    userModel.User.findOneAndUpdate({ _id: userReqData.id }, userData, { new: true }, (err, res) => {
         if (err) {
             console.log(err);
             result(null, err);

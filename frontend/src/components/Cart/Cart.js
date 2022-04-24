@@ -1,6 +1,6 @@
 import React , {useEffect, useState} from 'react';
 import axios from 'axios';
-import { CTable, CTableHead, CTableRow,CTableHeaderCell, CTableBody, CTableDataCell, CButton } from '@coreui/react';
+import { CTable, CTableHead,CModalBody,CFormInput, CTableRow,CTableHeaderCell,CFormCheck, CTableBody, CTableDataCell, CButton } from '@coreui/react';
 import { useNavigate } from 'react-router';
 
 const Cart = () => {
@@ -8,7 +8,13 @@ const Cart = () => {
     const[total, setTotal] = useState(0);
     const navigate = useNavigate();
     const[hasItems, setHasItems] = useState(false);
+    const[visibleGiftDesc, setVisibleGiftDesc] = useState(false);
 
+    function useForceUpdate() {
+        const [value, setValue] = useState(0);
+        return () => setValue((value) => value + 1);
+      }
+      const forceUpdate = useForceUpdate();
     useEffect(() => {
 
         async function getCart(){
@@ -28,6 +34,7 @@ const Cart = () => {
 
     },[]);
 
+
     const handleCheckout = () => {
         
         const theRandomNumber = Math.floor(Math.random() * 99999999) + 1;
@@ -35,7 +42,7 @@ const Cart = () => {
 
         cartItems.map(item => {
 
-            
+            if(item.price > 0){
 
             let randomID = Math.floor(Math.random() * 99999) + 1;
 
@@ -49,7 +56,13 @@ const Cart = () => {
                 price:item.price,
                 date_purc:today,
                 total:total,
+                gift:item.gift,
                 email:sessionStorage.getItem("token")
+            }
+
+            if(item.giftDesc && item.giftDesc.length >0)
+            {
+                data.giftDesc = item.giftDesc;
             }
 
             axios.post("/api/orders/" , data)
@@ -71,13 +84,12 @@ const Cart = () => {
 
 
             // CREATE Total Order
-        })
+        }})
 
         axios.delete("/api/cart/" + sessionStorage.getItem("token"))
 
         navigate("/orders");
     }
-
 
     console.log("\n Inside Cart Page")
 
@@ -102,16 +114,127 @@ const Cart = () => {
                     </CTableHead>
                     <CTableBody>
 
-                        {cartItems.map(({ image, name, quantity, price }) => (
-
+                        {cartItems.map((item) =>(
+                            
+                            
                             <CTableRow>
-                                <CTableHeaderCell align={'middle'} scope="row"><img src={image} width={100} /></CTableHeaderCell>
-                                <CTableDataCell align={'middle'}>{name}</CTableDataCell>
-                                <CTableDataCell align={'middle'}>{quantity}</CTableDataCell>
-                                <CTableDataCell align={'middle'}>{localStorage.getItem("currency")}{price}</CTableDataCell>
+                                <CTableHeaderCell align={'middle'} scope="row"><img src={item.image} width={100} />
+                                <CFormCheck  onChange={()=>{item.gift = item.gift === '0' ? '1' : '0';
+        console.log("gift toggle :",item.gift);
+        if (item.gift === '0'){
+            if(item.giftDesc){
+                item.giftDesc = null;
+            }
+        }
+        const index = cartItems ? cartItems.findIndex(
+                                        (cartItem) => cartItem._id === item._id
+                                      )
+                                    : null ;
+                                    console.log("index to update is " + index)
+                                    //cartItems[index] = item;
+                                    let t = cartItems
+                                    t[index] = item;
+                                    setCartItems(t);
+                                    forceUpdate();
+                                    }} id="flexCheckDefault" label="Gift Wrap"/>
+                              { item.gift!== '0'? <CModalBody>
+                
+                <CFormInput size='sm'  type='text' placeholder='Add Gift Description Here' onChange={(e)=>{
+                    item.giftDesc = e.target.value;
+                    console.log("gift description :",item.giftDesc);
+                    const index = cartItems ? cartItems.findIndex(
+                                                    (cartItem) => cartItem._id === item._id
+                                                  )
+                                                : null ;
+                                                console.log("index to update is " + index)
+                                                //cartItems[index] = item;
+                                                let t = cartItems
+                                                t[index] = item;
+                                                setCartItems(t);
+                                                forceUpdate();
+                }}></CFormInput>
+            </CModalBody> : ""}
+                                </CTableHeaderCell>
+
+                                <CTableDataCell align={'middle'}>{item.name}</CTableDataCell>
+                                <CTableDataCell align={'middle'}>
+                              <button variant='outline' type="button" onClick={() => {
+                                const a = item.quantity; 
+                                  item.quantity = parseInt(item.quantity) - 1;
+                                  console.log(
+                                    "item quantity is : " + item.quantity
+                                  );
+                                  item.price = (item.price - (item.price/a)) >=0  ? item.price - (item.price/a) : 0;
+                                  console.log("item price",item.price);
+                                  console.log(
+                                    "cart object is : " + JSON.stringify(cartItems)
+                                  );
+                                  const index = cartItems
+                                    ? cartItems.findIndex(
+                                        (cartItem) => cartItem._id === item._id
+                                      )
+                                    : 0;
+                                    console.log("index to update is " + index)
+                                    //cartItems[index] = item;
+                                    let t = cartItems
+                                    t[index] = item;
+                                    setCartItems(t);
+                                    setTotal(t.reduce((a, v) => a + v.price, 0).toFixed(2));
+                                   // forceUpdate();
+                                    console.log(
+                                      "cart object is : " + JSON.stringify(cartItems)
+                                    );
+                                }}>-</button>
+                            <input
+                              type="text"
+                              name="quant[1]"
+                              value={item.quantity}
+                              min="0"
+                              max="5"
+                              readonly
+                            ></input>
+                            {/* <span >{"Quantity : " + item.quantity + " "}  </span> */}
+                              <button
+                              variant='outline'
+                                type="button"
+                                onClick={() => {
+                                  const a = item.quantity;  
+                                  item.quantity = parseInt(item.quantity) + 1;
+                                  console.log(
+                                    "item quantity is : " + item.quantity
+                                  );
+                                  item.price = item.price + (item.price/a);
+                                  console.log("item price",item.price);
+    
+                                  console.log(
+                                    "cart object is : " + JSON.stringify(cartItems)
+                                  );
+                                  const index = cartItems
+                                    ? cartItems.findIndex(
+                                        (cartItem) => cartItem._id === item._id
+                                      )
+                                    : 0;
+                                    console.log("index to update is " + index)
+                                    //cartItems[index] = item;
+                                    let t = cartItems
+                                    t[index] = item;
+                                    setCartItems(t);
+                                    setTotal(t.reduce((a, v) => a + v.price, 0).toFixed(2));
+                                    //forceUpdate();
+                                    console.log(
+                                      "cart object is 1 : " + JSON.stringify(cartItems)
+                                    );
+                                  // cartItems
+                                  //setCartItems(cartItems);
+                                }}
+                              >+</button>
+                        </CTableDataCell>
+                                <CTableDataCell align={'middle'}>{localStorage.getItem("currency")}{item.price}</CTableDataCell>
                             </CTableRow>
-                        ))}
+                        ))
+                        }
                     </CTableBody>
+
 
                 </CTable><br /><br /><br /></>
                 <div>

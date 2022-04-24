@@ -35,7 +35,7 @@ exports.createShop = (req,res) => {
             res.send(result);
         }
         else res.send("SHOP Already exists");
-        console.log(shopData);
+        console.log(req.body);
     })
 }
 

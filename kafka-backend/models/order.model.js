@@ -45,6 +45,13 @@ const OrderSchema = new Schema({
     image:{
         type: String,
         default:"/default-item.png"
+    },
+    gift:{
+        type: String,
+        default:'0'
+    },
+    giftDesc:{
+        type:String,
     }
 },{
     versionKey: false

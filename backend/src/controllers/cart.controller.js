@@ -34,7 +34,7 @@ exports.createItem = (req,res) => {
             res.send(result);
         }
         else res.send("ITEM Already exists");
-        console.log(cartData);
+        console.log(req.body);
     })
 }
 

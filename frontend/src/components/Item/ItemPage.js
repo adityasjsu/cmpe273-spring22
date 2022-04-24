@@ -176,13 +176,13 @@ const ItemPage = (props) => {
                     ""}
 { fav ?  
                     
-                    <button color='link' onClick={handleUnFav} >Add to UnFavorites</button> 
+                    <button color='link' onClick={handleUnFav} >Add to Favorites</button> 
                 
                     :   
                     
                     <button color='link' onClick={handleFavorite} >Add to Favorites</button>
                 
-                    }                    
+                }   
                 </CCol>
             </CRow>
             </CContainer>

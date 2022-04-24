@@ -47,10 +47,13 @@ const OrderPage = () => {
                         </CTableRow>
                     </CTableHead>
                     <CTableBody>
-                    {  orderItems.map(({ image, name, order_ID, shop, quantity, price, date_purc, total }) => (
+                    {  orderItems.map(({ image, gift , giftDesc ,name, order_ID, shop, quantity, price, date_purc, total }) => (
                         
                         <CTableRow>
-                            <CTableHeaderCell align={'middle'} scope="row"><img src={image} width={100}/></CTableHeaderCell>
+                            <CTableHeaderCell align={'middle'} scope="row"><img src={image} width={100}/>
+                            {(gift === '1') ? <p>Gift Wrapped with Description : {giftDesc} </p> : ""
+                            }
+                            </CTableHeaderCell>
                             <CTableDataCell align={'middle'}>{name}</CTableDataCell>
                             {/*<CTableDataCell align={'middle'}>{order_ID}</CTableDataCell>*/}
                             <CTableDataCell align={'middle'}>{shop}</CTableDataCell>

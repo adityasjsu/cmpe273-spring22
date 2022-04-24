@@ -41,8 +41,8 @@ function handleTopicRequest(topic_name,fname){
 //first argument is topic name
 //second argument is a function that will handle this topic request
 //handleTopicRequest("post_book",userService)
-handleTopicRequest("User",userService)
-handleTopicRequest("Cart",cartService)
-handleTopicRequest("Shop",shopService)
-handleTopicRequest("Item",itemService)
-handleTopicRequest("Order",orderService)
+handleTopicRequest("User",userService);
+handleTopicRequest("Cart",cartService);
+handleTopicRequest("Shop",shopService);
+handleTopicRequest("Item",itemService);
+handleTopicRequest("Order",orderService);

@@ -1,10 +1,13 @@
 const shopModel = require('../models/shop.model');
+var kafka = require('../../kafka/client');
 
 // Get All Shops
 exports.getAllShops = (req,res) => {
     console.log("\nGET ALL SHOPS");
+    var msg = {};
+    msg.path='getAllShops';
 
-    shopModel.getAllShops((err, result) => {
+    kafka.make_request('Shop',msg, (err, result) => {
         if(err){
             res.send(err);
         }
@@ -19,9 +22,10 @@ exports.getAllShops = (req,res) => {
 // Create a Shop
 exports.createShop = (req,res) => {
     console.log("\nInside SHOP Controller: CREATE SHOP");
-
-    const shopData = new shopModel.Shop(req.body);
-    shopModel.createShop(shopData, (err, result) => {
+    var msg = {};
+    msg.path='createShop';
+    msg.body=req.body;
+    kafka.make_request('Shop',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -41,7 +45,10 @@ exports.createShop = (req,res) => {
 exports.getShopByName = (req, res) => {
     console.log("\nInside SHOP Controller: Get SHOP By name");
     console.log("name of shop:",req.params.name);
-    shopModel.getShopByName(req.params.name ,(err, result) => {
+    var msg = {};
+    msg.path='getShopByName';
+    msg.name=req.params.name;
+    kafka.make_request('Shop',msg,(err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -64,7 +71,10 @@ exports.getShopByName = (req, res) => {
 exports.getShopByUser = (req, res) => {
     console.log("Inside SHOP Controller:  by USER");
 
-    shopModel.getShopByUser(req.params.email ,(err, result) => {
+    var msg = {};
+    msg.path='getShopByUser';
+    msg.email=req.params.email;
+    kafka.make_request('Shop',msg,(err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -85,12 +95,11 @@ exports.getShopByUser = (req, res) => {
 // Update Shop
 exports.updateShop = (req, res) => {
     console.log("Inside Shop Controller: Update Shop");
-    const shopReqData = {
-        total_sales: req.body.total_sales,
-        name : req.body.name,
-        image : req.body.image}
- //   const shopReqData = new shopModel(req.body);
-    shopModel.updateShop(req.params.name, shopReqData , (err, result) => {
+    var msg = {};
+    msg.path='updateShop';
+    msg.body=req.body;
+    msg.name=req.params.name;
+    kafka.make_request('Shop',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -106,11 +115,11 @@ exports.updateShop = (req, res) => {
 // Update Shop Total Sales
 exports.updateShopSales = (req, res) => {
 
-    const shopReqData = {
-        total_sales: req.body.total_sales
-    }
-   // const shopReqData= new shopModel(req.body);
-    shopModel.updateShopSales(req.params.name, shopReqData, (err,result) => {
+    var msg = {};
+    msg.path='updateShopSales';
+    msg.body=req.body;
+    msg.name=req.params.name;
+    kafka.make_request('Shop',msg, (err,result) => {
         if(err)
         console.log(err)
         res.send(err);
@@ -125,11 +134,12 @@ exports.updateShopSales = (req, res) => {
 exports.updateShopImage = (req, res) => {
 
     console.log("Inside Shop Controller: Update Shop Image");
-    const shopReqData = {
-        image : req.body.image
-    }
-    //const shopReqData= new shopModel(req.body);
-    shopModel.updateShopImage(req.params.name, shopReqData, (err,result) => {
+    
+    var msg = {};
+    msg.path='updateShopImage';
+    msg.body=req.body;
+    msg.name=req.params.name;
+    kafka.make_request('Shop',msg, (err,result) => {
         if(err){
             res.send(err);
         }

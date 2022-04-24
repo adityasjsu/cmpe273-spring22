@@ -1,10 +1,12 @@
-const userModel = require('../models/user.model');
+//const userModel = require('../models/user.model');
+var kafka = require('../../kafka/client');
 
 // Get All Users
 exports.getAllUsers = (req,res) => {
     console.log("\nGET ALL USERS");
-
-    userModel.getAllUsers((err, result) => {
+    var msg = {};
+    msg.path='getAllUsers';
+    kafka.make_request('User',msg, function(err,result){
         if(err){
             res.send(err);
         }
@@ -13,16 +15,17 @@ exports.getAllUsers = (req,res) => {
             console.log(result);
         }
     })
-}
+    }
+    
 
 
 // Create  user 
 exports.createUser = (req,res) => {
     console.log("\nCREATE USER");
-
-    const userData = new userModel.User(req.body);
-    console.log("userdata",userData);
-    userModel.createUser(userData, (err, result) => {
+    var msg = {};
+    msg.path='createUser';
+    msg.body = req.body;
+    kafka.make_request('User',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -32,7 +35,7 @@ exports.createUser = (req,res) => {
             res.send(result);
         }
         else res.send("User Already exists");
-        console.log(userData);
+        console.log(msg.body);
     })
 }
 
@@ -42,12 +45,15 @@ exports.createUser = (req,res) => {
 exports.getUserByEmail = (req, res) => {
     console.log("Inside Controller: Get Profile");
 
-    userModel.getUserByEmail(req.params.email ,(err, result) => {
+    var msg = {};
+    msg.path='getUserByEmail';
+    msg.email=req.params.email;
+    kafka.make_request('User',msg, function(err,result){
         if(err){
             console.log(err);
             res.send(err);
         }
-        if(result.length == 0)
+        if(result && result.length == 0)
         {
             console.log("No Such User exists");
             res.send("No such user exists");
@@ -63,19 +69,11 @@ exports.getUserByEmail = (req, res) => {
 // Update Profile
 exports.updateProfile = (req, res) => {
     console.log("Inside User Controller: Update Profile");
-
+    var msg = {};
+    msg.path='updateProfile';
+    msg.body = req.body;
     //const userReqData = new userModel.User(req.body);
-    const userReqData = { name: req.body.name,
-        image: req.body.image,
-        email: req.body.email,
-        about: req.body.about,
-        city: req.body.city,
-        dob: req.body.dob,
-     address: req.body.address,
-     country: req.body.country,
-    phone_no: req.body.phone_no}
-    console.log("param id--",req.params.id,"body id--",req.body.id)
-    userModel.updateProfile(req.body.id, userReqData , (err, result) => {
+    kafka.make_request('User',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);

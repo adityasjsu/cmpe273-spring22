@@ -1,11 +1,12 @@
 const cartModel = require('../models/cart.model');
-
+var kafka = require('../../kafka/client');
 
 // Get All Items
 exports.getAllItems = (req,res) => {
     console.log("\nGET ALL CART ITEMS");
-
-    cartModel.getAllItems((err, result) => {
+    var msg = {};
+    msg.path='getAllItems';
+    kafka.make_request('Cart',msg,(err, result) => {
         if(err){
             res.send(err);
         }
@@ -20,9 +21,10 @@ exports.getAllItems = (req,res) => {
 // Create an Item
 exports.createItem = (req,res) => {
     console.log("\nCREATE CART ITEM");
-
-    const cartData = new cartModel.Cart(req.body);
-    cartModel.createItem(cartData, (err, result) => {
+    var msg = {};
+    msg.path='createItem';
+    msg.body=req.body;
+    kafka.make_request('Cart',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -41,8 +43,10 @@ exports.createItem = (req,res) => {
 // Get ITEM by ITEM_ID
 exports.getItemByID = (req, res) => {
     console.log("Inside CART Controller: Get CART ITEM");
-
-    cartModel.getItemByID(req.params.cart_item_ID ,(err, result) => {
+    var msg = {};
+    msg.path='getItemByID';
+    msg.cart_item_ID=req.params.cart_item_ID;
+    kafka.make_request('Cart',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -63,8 +67,10 @@ exports.getItemByID = (req, res) => {
 // Get ITEM by Email
 exports.getItemByEmail = (req, res) => {
     console.log("Inside CART Controller: Get CART ITEM");
-
-    cartModel.getItemByEmail(req.params.email  ,(err, result) => {
+    var msg = {};
+    msg.path='getItemByEmail';
+    msg.email=req.params.email;
+    kafka.make_request('Cart',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -84,7 +90,11 @@ exports.getItemByEmail = (req, res) => {
 
 // delete Items by email
 exports.deleteItem = (req, res) => {
-    cartModel.deleteItem(req.params.email, (err, user) =>{
+
+    var msg = {};
+    msg.path='deleteItem';
+    msg.email=req.params.email;
+    kafka.make_request('Cart',msg, (err, user) =>{
         if(err)
         res.send(err);
 

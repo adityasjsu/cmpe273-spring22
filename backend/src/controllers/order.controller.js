@@ -1,11 +1,13 @@
-const orderModel = require('../models/order.model');
-
+//const orderModel = require('../models/order.model');
+var kafka = require('../../kafka/client');
 
 // Get All Order Items
 exports.getAllOrders = (req,res) => {
     console.log("\nGET ALL ORDER ITEMS");
+    var msg = {};
+    msg.path='getAllOrders';
 
-    orderModel.getAllOrders((err, result) => {
+    kafka.make_request('Order',msg, (err, result) => {
         if(err){
             res.send(err);
         }
@@ -20,9 +22,10 @@ exports.getAllOrders = (req,res) => {
 // Create an Order Item
 exports.createOrderItem = (req,res) => {
     console.log("\nCREATE ORDER ITEM");
-
-    const orderData = new orderModel.Order(req.body);
-    orderModel.createOrderItem(orderData, (err, result) => {
+    var msg = {};
+    msg.path='createOrderItem';
+    msg.body=req.body;
+    kafka.make_request('Order',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);
@@ -32,7 +35,7 @@ exports.createOrderItem = (req,res) => {
             res.send(result);
         }
         else res.send("ITEM Already exists");
-        console.log(orderData);
+        console.log(req.body);
     })
 }
 
@@ -40,8 +43,10 @@ exports.createOrderItem = (req,res) => {
 // Get ORDER ITEMS by Email
 exports.getOrdersByEmail = (req, res) => {
     console.log("Inside ORDER Controller: Get ORDER ITEM");
-
-    orderModel.getOrdersByEmail(req.params.email  ,(err, result) => {
+    var msg = {};
+    msg.path='getOrdersByEmail';
+    msg.email=req.params.email;
+    kafka.make_request('Order',msg, (err, result) => {
         if(err){
             console.log(err);
             res.send(err);

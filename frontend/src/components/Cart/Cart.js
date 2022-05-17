@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { CTable, CTableHead, CModalBody, CFormInput, CTableRow, CTableHeaderCell, CFormCheck, CTableBody, CTableDataCell, CButton } from '@coreui/react';
 import { useNavigate } from 'react-router';
+import qlQuery from '../../graphQl/graphQlQuery';
+import { delete_Item, create_OrderItem, update_ProductQuantity } from '../../graphQl/mutation';
+import { getItemBy_Email } from '../../graphQl/queries';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -9,6 +12,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const [hasItems, setHasItems] = useState(false);
   const [visibleGiftDesc, setVisibleGiftDesc] = useState(false);
+
 
   function useForceUpdate() {
     const [value, setValue] = useState(0);
@@ -18,15 +22,23 @@ const Cart = () => {
   useEffect(() => {
 
     async function getCart() {
-      let response = await axios.get("/api/cart/byuser/" + sessionStorage.getItem("token"))
-      response = await response;
+      const data = {
+        "email": sessionStorage.getItem("token"),
+      };
+      const { getItemByEmail } = await qlQuery(getItemBy_Email, data);
 
-      setCartItems(response.data)
+      setCartItems(getItemByEmail);
+      setTotal(getItemByEmail.reduce((a, v) => a + v.price, 0).toFixed(2));
+      console.log(total);
+      // let response = await axios.get("/api/cart/byuser/" + sessionStorage.getItem("token"))
+      // response = await response;
+
+      // setCartItems(response.data)
       // await response.data.map(item => total = total + item.price);
-      setTotal(response.data.reduce((a, v) => a + v.price, 0).toFixed(2));
+      // setTotal(response.data.reduce((a, v) => a + v.price, 0).toFixed(2));
       // await response.data.map(item => setTotal(total+item.price));
 
-      console.log(total)
+      // console.log(total);
     }
 
     getCart()
@@ -35,58 +47,69 @@ const Cart = () => {
   }, []);
 
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
 
     const theRandomNumber = Math.floor(Math.random() * 99999999) + 1;
     const today = new Date().toString();
 
-    cartItems.map(item => {
+    cartItems.map(async (item) => {
 
       if (item.price > 0) {
 
         let randomID = Math.floor(Math.random() * 99999) + 1;
 
         const data = {
-          order_item_ID: randomID,
-          order_ID: theRandomNumber,
-          image: item.image,
-          name: item.name,
-          shop: item.shop,
-          quantity: item.quantity,
-          price: item.price,
-          date_purc: today,
-          total: total,
-          gift: item.gift,
-          email: sessionStorage.getItem("token")
+          "orderInput": {
+            "order_item_ID": randomID,
+            "order_ID": theRandomNumber,
+            "image": item.image,
+            "name": item.name,
+            "shop": item.shop,
+            "quantity": item.quantity,
+            "price": item.price,
+            "date_purc": today,
+            "total": total,
+            "gift": item.gift,
+            "email": sessionStorage.getItem("token")
+          }
         }
 
         if (item.giftDesc && item.giftDesc.length > 0) {
-          data.giftDesc = item.giftDesc;
+          data.orderInput.giftDesc = item.giftDesc;
+        }
+        const { createOrderItem } = await qlQuery(create_OrderItem, data);
+        console.log("order response", createOrderItem);
+        // axios.post("/api/orders/", data)
+        //   .then(response => {
+        //     console.log("order response", response);
+        //   })
+
+
+        let quantityData = {
+          "quantity": item.stock - data.quantity,
+          "product_ID": item.cart_item_ID,
         }
 
-        axios.post("/api/orders/", data)
-          .then(response => {
-            console.log("order response", response);
-          })
-
-
-        let quantity = {
-          quantity: item.stock - data.quantity
-        }
-
-        axios.put("/api/items/stock/" + item.cart_item_ID, quantity)
-          .then(response => {
-            console.log("Stock Fixed")
-            console.log(response);
-          })
+        const { updateProductQuantity } = await qlQuery(update_ProductQuantity, quantityData);
+        console.log("Stock fixed");
+        console.log(updateProductQuantity);
+        // axios.put("/api/items/stock/" + item.cart_item_ID, quantity)
+        //   .then(response => {
+        //     console.log("Stock Fixed")
+        //     console.log(response);
+        //   })
 
 
 
         // CREATE Total Order
       }
     })
-
-    axios.delete("/api/cart/" + sessionStorage.getItem("token"))
+    const data = {
+      "email": sessionStorage.getItem("token"),
+    }
+    const { deleteItem } = await qlQuery(delete_Item, data);
+    console.log(deleteItem);
+    // axios.delete("/api/cart/" + sessionStorage.getItem("token"))
 
     navigate("/orders");
   }
@@ -171,7 +194,7 @@ const Cart = () => {
                   console.log(
                     "cart object is : " + JSON.stringify(cartItems)
                   );
-                  if(item.quantity === 0){
+                  if (item.quantity === 0) {
                     let t = cartItems;
                     const index = t
                       ? t.findIndex(
@@ -182,24 +205,25 @@ const Cart = () => {
                     t.splice(index, 1);
                     setCartItems(t);
                     setTotal(t.reduce((a, v) => a + v.price, 0).toFixed(2));
-                    forceUpdate();      
+                    forceUpdate();
                   }
-                  else{
-                  const index = cartItems
-                    ? cartItems.findIndex(
-                      (cartItem) => cartItem._id === item._id
-                    )
-                    : 0;
-                  console.log("index to update is " + index)
-                  //cartItems[index] = item;
-                  let t = cartItems
-                  t[index] = item;
-                  setCartItems(t);
-                  setTotal(t.reduce((a, v) => a + v.price, 0).toFixed(2));
-                  // forceUpdate();
-                  console.log(
-                    "cart object is : " + JSON.stringify(cartItems)
-                  );}
+                  else {
+                    const index = cartItems
+                      ? cartItems.findIndex(
+                        (cartItem) => cartItem._id === item._id
+                      )
+                      : 0;
+                    console.log("index to update is " + index)
+                    //cartItems[index] = item;
+                    let t = cartItems
+                    t[index] = item;
+                    setCartItems(t);
+                    setTotal(t.reduce((a, v) => a + v.price, 0).toFixed(2));
+                    // forceUpdate();
+                    console.log(
+                      "cart object is : " + JSON.stringify(cartItems)
+                    );
+                  }
                 }}>-</button>
                 <input
                   type="text"

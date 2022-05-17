@@ -1,20 +1,22 @@
-import React , {Component} from 'react';
-import axios from 'axios';
-import {Navigate} from 'react-router';
+import React, { Component } from 'react';
+// import axios from 'axios';
+import { Navigate } from 'react-router';
+import qlQuery from '../../graphQl/graphQlQuery';
+import { create_User } from '../../graphQl/mutation';
 //import { Link } from 'react-router-dom';
 //import { CForm, CFormLabel, CFormInput, CCol, CButton, CRow, CContainer, CTabContent, CLink } from '@coreui/react';
 
 class Signup extends Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
         this.state = {
-             email: "",
-                 name: "",
-                 password: "",
-                errMssg: "",
-                navigateTag: "",
-                created:false
+            email: "",
+            name: "",
+            password: "",
+            errMssg: "",
+            navigateTag: "",
+            created: false
         }
 
         // this.usernameChangeHandler = this.usernameChangeHandler.bind(this);
@@ -46,41 +48,62 @@ class Signup extends Component {
         })
     }
 
-    addUser = (e) => {
+    addUser = async (e) => {
 
         //prevent page from refresh
         e.preventDefault();
 
+        // const data = {
+        //     email: this.state.email,
+        //     password: this.state.password,
+        //     name: this.state.name,
+        //     image:"/default.jpeg"
+        // }
         const data = {
-            email: this.state.email,
-            password: this.state.password,
-            name: this.state.name,
-            image:"/default.jpeg"
+            "userInput": {
+                "email": this.state.email,
+                "password": this.state.password,
+                "name": this.state.name,
+                "image": "/default.jpeg"
+            }
         }
-        axios.defaults.withCredentials = true;
-        axios.post("/api/users", data)
-            .then(response => {
-                console.log("Status code" , response.status);
-
-                if(response.status === 200){
-                    this.setState({
-                         errMssg: "", created:true 
-                    })
-                }
-                else{
-                    this.setState({
-                        errMssg: "Could Not Sign Up"
-                    })
-                }
+        const { createUser } = await qlQuery(create_User, data);
+        console.log("user _id", createUser._id);
+        if (createUser._id !== undefined) {
+            this.setState({
+                errMssg: "", created: true
             })
+        }
+        else {
+            this.setState({
+                errMssg: "Could Not Sign Up"
+            })
+        }
+        // axios.defaults.withCredentials = true;
+
+        // axios.post("/api/users", data)
+        //     .then(response => {
+        //         console.log("Status code" , response.status);
+
+        //         if(response.status === 200){
+        //             this.setState({
+        //                  errMssg: "", created:true 
+        //             })
+        //         }
+        //         else{
+        //             this.setState({
+        //                 errMssg: "Could Not Sign Up"
+        //             })
+        //         }
+        //     })
     }
 
-    render(){
-         let navigateVar = null;
-         if(this.state.created === true){
-            navigateVar = <Navigate to= "/login"/>
-         }
-        return(
+    render() {
+        let navigateVar = null;
+        if (this.state.created === true) {
+            navigateVar = <Navigate to="/login" />
+        }
+        return (
             <><div className='App'>
                 {navigateVar}
                 <br />
@@ -88,7 +111,7 @@ class Signup extends Component {
                 <br />
                 <br />
             </div>
-            <div class="container">
+                <div class="container">
                     <h2>Create Your Account</h2>
                     <form onSubmit={this.addUser}>
                         <div style={{ width: '30%' }} class="form-group">
@@ -108,18 +131,18 @@ class Signup extends Component {
                         </div>
                         <br />
                         <div style={{ width: '30%' }}>
-                            <button class="btn btn-success" type="submit" style={{backgroundColor: ''}}>Register</button>
+                            <button class="btn btn-success" type="submit" style={{ backgroundColor: '' }}>Register</button>
                         </div>
                     </form>
                 </div>
-                <br/>
-                <br/>
+                <br />
+                <br />
 
 
-                
+
             </>
 
-                
+
         );
     }
 }

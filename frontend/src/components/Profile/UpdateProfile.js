@@ -1,64 +1,84 @@
-import React , {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Navigate } from 'react-router';
 import { useLocation } from 'react-router-dom'
 import { CForm, CFormLabel, CFormInput, CCol, CButton, CRow, CContainer, CTabContent, CFormSelect } from '@coreui/react';
-
+import qlQuery from '../../graphQl/graphQlQuery';
+import { update_Profile } from '../../graphQl/mutation';
 
 const UpdateProfile = () => {
 
     const location = useLocation()
     const { user } = location.state
 
-    const[name, setName] = useState(user.name);
-    const[image, setImage] = useState(user.image);
-    const[email, setEmail] = useState(user.email);
-    const[about, setAbout] = useState(user.about);
-    const[city, setCity] = useState(user.city);
-    const[dob, setDOB] = useState(user.dob);
-    const[address, setAddress] = useState(user.address);
-    const[country, setCountry] = useState(user.country);
-    const[phone_no, setPhone] = useState(user.phone_no);
-    const[message , setMessage] = useState("");
-    const[updated,setUpdated] = useState(false);
-    const[id] = useState(user._id);
-    console.log("user with id",user._id);
-    
+    const [name, setName] = useState(user.name);
+    const [image, setImage] = useState(user.image);
+    const [email, setEmail] = useState(user.email);
+    const [about, setAbout] = useState(user.about);
+    const [city, setCity] = useState(user.city);
+    const [dob, setDOB] = useState(user.dob);
+    const [address, setAddress] = useState(user.address);
+    const [country, setCountry] = useState(user.country);
+    const [phone_no, setPhone] = useState(user.phone_no);
+    const [message, setMessage] = useState("");
+    const [updated, setUpdated] = useState(false);
+    const [id] = useState(user._id);
+    console.log("user with id", user._id);
 
-    const handleUpdate = (e) => {
+
+    const handleUpdate = async (e) => {
         e.preventDefault();
 
+        // const updatedData = {
+
+        //     name: name,
+        //     image:image,
+        //     email: email,
+        //     about: about,
+        //     city: city,
+        //     dob: dob,
+        //     address: address,
+        //     country: country,
+        //     phone_no: phone_no,
+        //     id: id
+        // }
         const updatedData = {
 
-            name: name,
-            image:image,
-            email: email,
-            about: about,
-            city: city,
-            dob: dob,
-            address: address,
-            country: country,
-            phone_no: phone_no,
-            id: id
+            "userInput": {
+                "email": email,
+                "name": name,
+                "image": image,
+                "about": about,
+                "city": city,
+                "dob": dob,
+                "address": address,
+                "country": country,
+                "phone_no": phone_no,
+                "id": id,
+            }
         }
-
-        axios.put("/api/users/" + sessionStorage.getItem("token") , updatedData)
-        .then((response) => {
-            setMessage(response);
+        const { updateProfile } = await qlQuery(update_Profile, updatedData);
+        if (updateProfile) {
+            setMessage(updateProfile.message);
             setUpdated(true);
-        });
+        }
+        // axios.put("/api/users/" + sessionStorage.getItem("token") , updatedData)
+        // .then((response) => {
+        //     setMessage(response);
+        //     setUpdated(true);
+        // });
 
     }
 
 
-    const uploadImage = async e=> {
+    const uploadImage = async e => {
         const files = e.target.files
         const data = new FormData
         data.append('file', files[0])
         data.append('upload_preset', 'x9kvvkmf')
 
         const res = await fetch(
-            'http://api.cloudinary.com/v1_1/dtsbyd9s6/image/upload', 
+            'http://api.cloudinary.com/v1_1/dtsbyd9s6/image/upload',
             {
                 method: 'POST',
                 body: data
@@ -74,55 +94,55 @@ const UpdateProfile = () => {
 
     let redirectVar = null;
 
-    if(updated === true){
-        redirectVar =  <Navigate to= "/profile"/>
+    if (updated === true) {
+        redirectVar = <Navigate to="/profile" />
     }
 
     console.log("\n Inside User Profile Update")
 
-    return(        
+    return (
         <div className='App'>
             {redirectVar}
-            <br/>
-            <br/>
-            <div style={{color:"green"}}>
+            <br />
+            <br />
+            <div style={{ color: "green" }}>
                 <CContainer>
                     <CRow>
                         <CCol>
                             <CForm>
 
-                            <img src={image} width={200}/>
-            <br/>
-            <h4>Your Profile </h4>
+                                <img src={image} width={200} />
+                                <br />
+                                <h4>Your Profile </h4>
 
-                                <br/>
+                                <br />
                                 <CFormLabel>Upload Picture:</CFormLabel>
                                 <input onChange={uploadImage} type='file' name="image" accept='image/*'></input>
-                                <br/>
+                                <br />
 
                                 <label>Name:</label>
-                                <input  value={name} onChange={(e) => setName(e.target.value)} type='text' name="name" placeholder='Name'></input>
-                                <br/>
-                                {}
-                                <br/>
+                                <input value={name} onChange={(e) => setName(e.target.value)} type='text' name="name" placeholder='Name'></input>
+                                <br />
+                                { }
+                                <br />
                                 <label>Email:</label>
                                 <input className='' value={email} disabled type='text' name="email" placeholder='email'></input>
-                                <br/><br/>
-                                <br/>
+                                <br /><br />
+                                <br />
                                 <label>About:</label>
                                 <input className='' value={about} onChange={(e) => setAbout(e.target.value)} type='text' name="name" placeholder='About'></input>
-                                <br/><br/>
+                                <br /><br />
                                 <label>City:</label>
                                 <input value={city} onChange={(e) => setCity(e.target.value)} type='text' name="city" placeholder='City'></input>
-                                <br/><br/>
+                                <br /><br />
                                 <label>Date of Birth:</label>
-                                <input  value={dob} onChange={(e) => setDOB(e.target.value)} type='text' name="dob" placeholder='mm/dd/yyyy'></input>
-                                <br/><br/>
+                                <input value={dob} onChange={(e) => setDOB(e.target.value)} type='text' name="dob" placeholder='mm/dd/yyyy'></input>
+                                <br /><br />
                                 <label>Full Address:</label>
                                 <input required value={address} onChange={(e) => setAddress(e.target.value)} type='text' name="address" placeholder='Full Address'></input>
-                                <br/><br/>
+                                <br /><br />
                                 <label>Country:</label>
-                                <CFormSelect value={country} onChange={(e) => setCountry(e.target.value)}  id="country" name="country" placeholder='Select Country'>
+                                <CFormSelect value={country} onChange={(e) => setCountry(e.target.value)} id="country" name="country" placeholder='Select Country'>
                                     <option value="Afganistan">Afghanistan</option>
                                     <option value="Albania">Albania</option>
                                     <option value="Algeria">Algeria</option>
@@ -371,22 +391,22 @@ const UpdateProfile = () => {
                                     <option value="Zimbabwe">Zimbabwe</option>
 
                                 </CFormSelect>
-                                <br/><br/>
+                                <br /><br />
                                 <label>Phone Number:</label>
                                 <input value={phone_no} onChange={(e) => setPhone(e.target.value)} type='text' name="phone_no" placeholder='Phone Number'></input>
-                                <br/><br/>
+                                <br /><br />
                             </CForm>
                             <button onClick={handleUpdate}> Update</button>
                         </CCol>
                         <CCol>
-                            
+
                         </CCol>
                     </CRow>
                 </CContainer>
-                <br/>
-                <br/>
-                <br/>
-               
+                <br />
+                <br />
+                <br />
+
             </div>
         </div>
     )

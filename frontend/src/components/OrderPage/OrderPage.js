@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router';
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ReactPaginate from "react-paginate";
+import qlQuery from '../../graphQl/graphQlQuery';
+// import mutation from '../../graphQl/mutation';
+import { getOrdersBy_Email } from '../../graphQl/queries';
 
 const OrderPage = (props) => {
     const [orderItems, setOrderItems] = useState([]);
@@ -13,20 +16,33 @@ const OrderPage = (props) => {
     const [hasItems, setHasItems] = useState(false);
 
     useEffect(() => {
-        setTimeout(() => {
-            axios.get("/api/orders/" + sessionStorage.getItem("token"))
-            .then((response) => {
-                if (response.status === 200) {
-                    response.data.sort( (a, b) =>
+        setTimeout(async () => {
+            const data = {
+                "email": sessionStorage.getItem("token"),
+            }
+            const { getOrdersByEmail } = await qlQuery(getOrdersBy_Email, data);
+            if (getOrdersByEmail) {
+                getOrdersByEmail.sort((a, b) =>
                     a.date_purc.localeCompare(b.date) ||
                     a.time.date_purc(b.time));
-                    console.log("response:", response.data);
-                    const items = response.data;
-                    setOrderItems(items);
-                    setHasItems(true);
-                }
+                console.log("response:", getOrdersByEmail);
+                const items = getOrdersByEmail;
+                setOrderItems(items);
+                setHasItems(true);
+            }
+            // axios.get("/api/orders/" + sessionStorage.getItem("token"))
+            // .then((response) => {
+            //     if (response.status === 200) {
+            //         response.data.sort( (a, b) =>
+            //         a.date_purc.localeCompare(b.date) ||
+            //         a.time.date_purc(b.time));
+            //         console.log("response:", response.data);
+            //         const items = response.data;
+            //         setOrderItems(items);
+            //         setHasItems(true);
+            //     }
 
-            });
+            // });
             console.log("has:", hasItems);
         }, 250);
     }, []);
